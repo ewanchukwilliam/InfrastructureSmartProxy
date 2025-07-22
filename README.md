@@ -29,3 +29,8 @@ python manage.py runserver
 ```bash
 gunicorn infrastructure_smart_proxy.wsgi:application
 ```
+
+
+
+# MIGHT BE ABLE TO USE boto3 to do this instead of terraform
+# https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#EC2.Client.describe_instances
