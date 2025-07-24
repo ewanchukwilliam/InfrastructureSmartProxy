@@ -1,0 +1,192 @@
+<style>
+.container-section {
+    background: white;
+    padding: 4rem 2rem;
+    min-height: 60vh;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.containers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.container-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #e9ecef;
+}
+
+.container-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.container-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.container-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-pending { background: #fef3cd; color: #856404; }
+.status-running { background: #d1ecf1; color: #0c5460; }
+.status-stopped { background: #f8d7da; color: #721c24; }
+.status-error { background: #f5c6cb; color: #721c24; }
+.status-terminated { background: #e2e3e5; color: #383d41; }
+
+.container-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-label {
+    font-size: 0.8rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.2rem;
+}
+
+.detail-value {
+    font-weight: 500;
+    color: #333;
+}
+
+.container-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-success { background: #28a745; color: white; }
+.btn-danger { background: #dc3545; color: white; }
+.btn-info { background: #17a2b8; color: white; }
+.btn-secondary { background: #6c757d; color: white; }
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #666;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+</style>
+
+<section class="container-section">
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h2 class="page-title">Container Management</h2>
+                <p class="section-subtitle">Manage your infrastructure containers</p>
+            </div>
+            <a href="/admin/accounts/container/add/" class="btn btn-primary">+ Add Container</a>
+        </div>
+
+        {% if containers %}
+            <div class="containers-grid">
+                {% for container in containers %}
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">{{ container.name }}</div>
+                        <span class="status-badge status-{{ container.status }}">{{ container.get_status_display }}</span>
+                    </div>
+                    
+                    <div class="container-details">
+                        <div class="detail-item">
+                            <div class="detail-label">IP Address</div>
+                            <div class="detail-value">{{ container.ip_address|default:"Not assigned" }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Port</div>
+                            <div class="detail-value">{{ container.port }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Username</div>
+                            <div class="detail-value">{{ container.username }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Created</div>
+                            <div class="detail-value">{{ container.created_at|date:"M d, Y" }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="container-actions">
+                        {% if container.status == 'stopped' %}
+                            <button class="btn-sm btn-success">Start</button>
+                        {% elif container.status == 'running' %}
+                            <button class="btn-sm btn-danger">Stop</button>
+                        {% endif %}
+                        <button class="btn-sm btn-info">Connect</button>
+                        <a href="/admin/accounts/container/{{ container.id }}/change/" class="btn-sm btn-secondary">Edit</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">🐳</div>
+                <h3 class="empty-title">No Containers Yet</h3>
+                <p>Start by creating your first container to manage your infrastructure.</p>
+                <br>
+                <a href="/admin/accounts/container/add/" class="btn btn-primary">Create First Container</a>
+            </div>
+        {% endif %}
+    </div>
+</section>

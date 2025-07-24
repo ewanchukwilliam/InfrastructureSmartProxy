@@ -22,4 +22,6 @@ from InfraSmartRouter import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
+    # model views
+    path('containers/', views.container_list, name='container-list'),
 ]
