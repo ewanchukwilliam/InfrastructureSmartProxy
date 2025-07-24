@@ -3,7 +3,7 @@ x-environment: &dev_environment
   STAGE: "DEV"
   DEBUG: "True"
   DB_NAME: postgres
-  DB_HOST: db
+  DB_HOST: database
   DB_PASSWORD: postgres
   DB_PORT: 5432
   DB_USER: postgres
@@ -16,41 +16,43 @@ x-logging: &default_logging
     max-file: "3"
 
 services:
-  SmartRouter:
+  smartrouter:
     build:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      - db
+      - database
     volumes:
       - .:/app:cached
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       <<: *dev_environment
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000 && python manage.py makemigrations && python manage.py migrate
     ports:
       - "8000:8000"
     logging: *default_logging
 
-  Database:
+  database:
     image: postgres:16
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./docker-volumes/postgres:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
     logging: *default_logging
 
-  Nginx:
+  nginx:
     image: nginx:stable
     ports:
       - "80:80"
     depends_on:
-      - django
+      - smartrouter
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     logging: *default_logging
 
-volumes:
-  postgres_data:
+# volumes:
+#   postgres_data:
