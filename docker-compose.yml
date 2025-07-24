@@ -16,7 +16,7 @@ x-logging: &default_logging
     max-file: "3"
 
 services:
-  django:
+  SmartRouter:
     build:
       context: .
       dockerfile: Dockerfile
@@ -32,7 +32,7 @@ services:
       - "8000:8000"
     logging: *default_logging
 
-  db:
+  Database:
     image: postgres:16
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -42,7 +42,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     logging: *default_logging
 
-  nginx:
+  Nginx:
     image: nginx:stable
     ports:
       - "80:80"
