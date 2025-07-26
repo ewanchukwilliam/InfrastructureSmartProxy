@@ -1,5 +1,20 @@
 {
-    "venvPath": ".",
-    "venv": ".venv",
-    "pythonPath": ".venv/bin/python"
+  "typeCheckingMode": "basic",
+  "pythonVersion": "3.11",
+  "include": [
+    "."
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*",
+    "venv",
+    "env"
+  ],
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+  "reportUnusedImport": true,
+  "reportUnusedVariable": true,
+  "reportDuplicateImport": true,
+  "reportUnnecessaryTypeIgnoreComment": true
 }
