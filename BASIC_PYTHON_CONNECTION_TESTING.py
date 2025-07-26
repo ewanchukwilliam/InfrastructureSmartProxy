@@ -2,17 +2,18 @@ import boto3
 import time
 import logging
 from botocore.exceptions import ClientError
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # AWS configuration (modify these as needed)
-REGION = 'us-east-1'
-AMI_ID = 'ami-0c55b159cbfafe1f0'  # Example: Amazon Linux 2 AMI (update for your region)
-INSTANCE_TYPE = 't2.micro'
-KEY_NAME = 'my-key-pair'  # Replace with your EC2 key pair name
-SECURITY_GROUP_IDS = ['sg-1234567890abcdef0']  # Replace with your security group ID
+REGION = os.environ.get('AWS_REGION', 'us-east-1')
+AMI_ID =  os.environ.get('AMI_ID', 'ami-0a5b3c9c1d0e0f1g2')  # Replace with your AMI ID
+INSTANCE_TYPE = os.environ.get('INSTANCE_TYPE', 't3.micro')  # Replace with your instance type
+KEY_NAME = os.environ.get('KEY_NAME', 'my-key-pair')  # Replace with your key pair name
+SECURITY_GROUP_IDS = [ os.environ.get('SECURITY_GROUP_IDS', 'sg-12345678') ]  # Replace with your security group IDs
 
 def create_ec2_instance(ec2_client, ami_id=AMI_ID, instance_type=INSTANCE_TYPE, key_name=KEY_NAME, security_group_ids=SECURITY_GROUP_IDS):
     """Launch a new EC2 instance."""
