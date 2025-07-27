@@ -22,6 +22,10 @@ from InfraSmartRouter import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
-    # model views
-    path('containers/', views.container_list, name='container-list'),
+    # EC2 instance management
+    path('instances/create/', views.create_instance, name='create-instance'),
+    path('instances/<int:instance_id>/start/', views.start_instance, name='start-instance'),
+    path('instances/<int:instance_id>/stop/', views.stop_instance, name='stop-instance'),
+    path('instances/<int:instance_id>/terminate/', views.terminate_instance, name='terminate-instance'),
+    path('instances/<int:instance_id>/status/', views.check_instance_status, name='check-instance-status'),
 ]

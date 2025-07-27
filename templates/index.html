@@ -212,6 +212,202 @@
             letter-spacing: 1px;
         }
         
+        .instances {
+            background: #f8f9fa;
+            padding: 4rem 2rem;
+        }
+        
+        .instance-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+        }
+        
+        .instance-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .instance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .instance-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .instance-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-running {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-stopped {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-terminated {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .instance-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-item {
+            font-size: 0.9rem;
+        }
+        
+        .info-label {
+            color: #666;
+            margin-bottom: 0.2rem;
+        }
+        
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .instance-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-sm:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .btn-sm:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .create-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-input {
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn-create {
+            background: #667eea;
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-create:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+        
+        .btn-create:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
         footer {
             background: #333;
             color: white;
@@ -241,8 +437,8 @@
             <a href="/" class="logo">InfraSmartRouter</a>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
+                <li><a href="#instances">Instances</a></li>
                 <li><a href="#stats">Stats</a></li>
-				<li><a href="/containers" hx-get="{% url 'container-list' %}" hx-target="#content" hx-swap="innerHTML">Containers</a></li>
                 <li><a href="/admin">Admin</a></li>
             </ul>
         </div>
@@ -301,7 +497,113 @@
             </div>
         </div>
     </section>
-	<div id="content">
+
+    <section class="instances" id="instances">
+        <div class="container">
+            <h2 class="section-title">EC2 Instances</h2>
+            <p class="section-subtitle">Manage your AWS EC2 instances with start, stop, and terminate controls</p>
+            
+            <div class="create-form">
+                <div class="form-title">Create New Instance</div>
+                <form id="createInstanceForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="instanceName">Instance Name</label>
+                            <input type="text" id="instanceName" class="form-input" placeholder="my-instance" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="instanceType">Instance Type</label>
+                            <select id="instanceType" class="form-input">
+                                <option value="t2.nano">t2.nano</option>
+                                <option value="t2.micro" selected>t2.micro</option>
+                                <option value="t2.small">t2.small</option>
+                                <option value="t2.medium">t2.medium</option>
+                                <option value="t2.large">t2.large</option>
+                                <option value="t3.nano">t3.nano</option>
+                                <option value="t3.micro">t3.micro</option>
+                                <option value="t3.small">t3.small</option>
+                                <option value="t3.medium">t3.medium</option>
+                                <option value="t3.large">t3.large</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="region">Region</label>
+                            <select id="region" class="form-input">
+                                <option value="us-east-1" selected>US East (N. Virginia)</option>
+                                <option value="us-east-2">US East (Ohio)</option>
+                                <option value="us-west-1">US West (N. California)</option>
+                                <option value="us-west-2">US West (Oregon)</option>
+                                <option value="ca-central-1">Canada (Central)</option>
+                                <option value="eu-central-1">Europe (Frankfurt)</option>
+                                <option value="eu-west-1">Europe (Ireland)</option>
+                                <option value="eu-west-2">Europe (London)</option>
+                                <option value="eu-west-3">Europe (Paris)</option>
+                                <option value="eu-north-1">Europe (Stockholm)</option>
+                                <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+                                <option value="ap-northeast-2">Asia Pacific (Seoul)</option>
+                                <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
+                                <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
+                                <option value="ap-south-1">Asia Pacific (Mumbai)</option>
+                                <option value="sa-east-1">South America (São Paulo)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="username">Username</label>
+                            <input type="text" id="username" class="form-input" value="ubuntu" placeholder="ubuntu" />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-create">Create Instance</button>
+                </form>
+            </div>
+            
+            {% if instances %}
+                {% for instance in instances %}
+                <div class="instance-card" data-instance-id="{{ instance.id }}">
+                    <div class="instance-header">
+                        <div class="instance-name">{{ instance.name }}</div>
+                        <div class="instance-status status-{{ instance.status }}">{{ instance.get_status_display }}</div>
+                    </div>
+                    
+                    <div class="instance-info">
+                        <div class="info-item">
+                            <div class="info-label">Instance Type</div>
+                            <div class="info-value">{{ instance.instance_type }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Region</div>
+                            <div class="info-value">{{ instance.get_region_display }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">IP Address</div>
+                            <div class="info-value">{{ instance.ip_address|default:"Not assigned" }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">AWS Instance ID</div>
+                            <div class="info-value">{{ instance.aws_instance_id|default:"Not created" }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="instance-actions">
+                        {% if instance.status != 'terminated' %}
+                            {% if instance.status == 'stopped' or instance.status == 'pending' %}
+                                <button class="btn-sm btn-success" onclick="manageInstance('start', {{ instance.id }})">Start</button>
+                            {% endif %}
+                            {% if instance.status == 'running' %}
+                                <button class="btn-sm btn-warning" onclick="manageInstance('stop', {{ instance.id }})">Stop</button>
+                            {% endif %}
+                            <button class="btn-sm btn-danger" onclick="manageInstance('terminate', {{ instance.id }})">Terminate</button>
+                        {% endif %}
+                        <button class="btn-sm btn-info" onclick="checkStatus({{ instance.id }})">Check Status</button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="instance-card">
+                    <p>No EC2 instances found. Create instances through the admin panel.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
 
     <section class="stats" id="stats">
         <div class="container">
@@ -334,5 +636,191 @@
     </footer>
 
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        async function manageInstance(action, instanceId) {
+            const button = event.target;
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Processing...';
+
+            try {
+                const response = await fetch(`/instances/${instanceId}/${action}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateInstanceStatus(instanceId, data.status);
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error occurred', 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = originalText;
+            }
+        }
+
+        async function checkStatus(instanceId) {
+            try {
+                const response = await fetch(`/instances/${instanceId}/status/`);
+                const data = await response.json();
+                
+                updateInstanceInfo(instanceId, data);
+                showMessage('Status updated', 'success');
+            } catch (error) {
+                showMessage('Failed to check status', 'error');
+            }
+        }
+
+        function updateInstanceStatus(instanceId, status) {
+            const card = document.querySelector(`[data-instance-id="${instanceId}"]`);
+            const statusElement = card.querySelector('.instance-status');
+            
+            statusElement.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            statusElement.className = `instance-status status-${status}`;
+            
+            updateActionButtons(card, status);
+        }
+
+        function updateInstanceInfo(instanceId, data) {
+            const card = document.querySelector(`[data-instance-id="${instanceId}"]`);
+            
+            updateInstanceStatus(instanceId, data.status);
+            
+            const ipElement = card.querySelector('.info-item:nth-child(3) .info-value');
+            ipElement.textContent = data.ip_address || 'Not assigned';
+        }
+
+        function updateActionButtons(card, status) {
+            const actionsDiv = card.querySelector('.instance-actions');
+            const buttons = actionsDiv.querySelectorAll('button:not(.btn-info)');
+            buttons.forEach(btn => btn.remove());
+
+            if (status !== 'terminated') {
+                if (status === 'stopped' || status === 'pending') {
+                    const startBtn = document.createElement('button');
+                    startBtn.className = 'btn-sm btn-success';
+                    startBtn.textContent = 'Start';
+                    startBtn.onclick = () => manageInstance('start', card.dataset.instanceId);
+                    actionsDiv.insertBefore(startBtn, actionsDiv.lastElementChild);
+                }
+                
+                if (status === 'running') {
+                    const stopBtn = document.createElement('button');
+                    stopBtn.className = 'btn-sm btn-warning';
+                    stopBtn.textContent = 'Stop';
+                    stopBtn.onclick = () => manageInstance('stop', card.dataset.instanceId);
+                    actionsDiv.insertBefore(stopBtn, actionsDiv.lastElementChild);
+                }
+                
+                const terminateBtn = document.createElement('button');
+                terminateBtn.className = 'btn-sm btn-danger';
+                terminateBtn.textContent = 'Terminate';
+                terminateBtn.onclick = () => manageInstance('terminate', card.dataset.instanceId);
+                actionsDiv.insertBefore(terminateBtn, actionsDiv.lastElementChild);
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 4px;
+                color: white;
+                font-weight: 500;
+                z-index: 1000;
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+            `;
+            messageDiv.textContent = message;
+            
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        async function createInstance(formData) {
+            const submitButton = document.querySelector('.btn-create');
+            const originalText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = 'Creating...';
+
+            try {
+                const response = await fetch('/instances/create/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    document.getElementById('createInstanceForm').reset();
+                    // Refresh the page to show the new instance
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error occurred', 'error');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('createInstanceForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    name: document.getElementById('instanceName').value.trim(),
+                    instance_type: document.getElementById('instanceType').value,
+                    region: document.getElementById('region').value,
+                    username: document.getElementById('username').value.trim() || 'ubuntu'
+                };
+
+                if (!formData.name) {
+                    showMessage('Instance name is required', 'error');
+                    return;
+                }
+
+                createInstance(formData);
+            });
+        });
+    </script>
 </body>
 </html>
