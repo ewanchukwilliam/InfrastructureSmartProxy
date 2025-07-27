@@ -8,6 +8,7 @@ cryptography==45.0.5
 Django==5.2.4
 django-stubs==5.2.2
 django-stubs-ext==5.2.2
+django-types==0.22.0
 jmespath==1.0.1
 mypy==1.17.0
 mypy-boto3-ec2==1.39.14
@@ -16,7 +17,6 @@ pathspec==0.12.1
 psycopg2-binary==2.9.10
 pycparser==2.22
 python-dateutil==2.9.0.post0
-python-dotenv==1.0.1
 s3transfer==0.6.2
 six==1.17.0
 sqlparse==0.5.3

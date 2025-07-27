@@ -48,39 +48,39 @@ class EC2Instance(models.Model):
         ('sa-east-1', 'South America (São Paulo)'),
     )
 
-    name: models.CharField = models.CharField(max_length=255, unique=True) 
-    ip_address: models.GenericIPAddressField = models.GenericIPAddressField(null=True, blank=True)  
-    port: models.PositiveIntegerField = models.PositiveIntegerField(
+    name= models.CharField(max_length=255, unique=True) 
+    ip_address= models.GenericIPAddressField(null=True, blank=True)  
+    port= models.PositiveIntegerField(
         default=22,
         validators=[MinValueValidator(1), MaxValueValidator(65535)]
     )
-    creating_user: models.ForeignKey = models.ForeignKey(
+    creating_user= models.ForeignKey(
         User,
         on_delete= models.DO_NOTHING,
         related_name='creating_user',
     )
-    username: models.CharField = models.CharField(max_length=100)
-    password: models.CharField = models.CharField(max_length=255, blank=True)
-    ssh_key: models.TextField = models.TextField(blank=True, help_text="SSH private key for authentication")
-    instance_type: models.CharField = models.CharField(
+    username= models.CharField(max_length=100)
+    password= models.CharField(max_length=255, blank=True)
+    ssh_key= models.TextField(blank=True, help_text="SSH private key for authentication")
+    instance_type= models.CharField(
         max_length=20,
         choices=INSTANCE_TYPE_CHOICES,
         default='t2.micro'
     )
-    aws_instance_id: models.CharField = models.CharField(
+    aws_instance_id= models.CharField(
         max_length=20, 
         blank=True, 
         null=True, 
         help_text="AWS EC2 instance ID (e.g., i-1234567890abcdef0)"
     )
-    region: models.CharField = models.CharField(max_length=20, choices=REGION_CHOICES, default='us-east-1')
-    status: models.CharField = models.CharField(
+    region= models.CharField(max_length=20, choices=REGION_CHOICES, default='us-east-1')
+    status= models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='pending'
     )
-    created_at: models.DateTimeField = models.DateTimeField(default=timezone.now)
-    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
+    created_at= models.DateTimeField(default=timezone.now)
+    updated_at= models.DateTimeField(auto_now=True)
     
     class Meta:
         ordering: list[str] = ['-created_at']

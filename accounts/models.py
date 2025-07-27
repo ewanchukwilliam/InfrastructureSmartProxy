@@ -11,24 +11,24 @@ class User(AbstractUser):
         ('user', 'Standard User'),
         ('viewer', 'Read-Only User'),
     ]
-    username: models.CharField = models.CharField(max_length=150, unique=True)
-    email: models.EmailField = models.EmailField(unique=True)
-    first_name: models.CharField = models.CharField(max_length=150, blank=True)
-    last_name: models.CharField = models.CharField(max_length=150, blank=True)
-    phone: models.CharField = models.CharField(max_length=150, blank=True)
-    organization: models.CharField = models.CharField(max_length=150, blank=True)
-    role: models.CharField = models.CharField(
+    username= models.CharField(max_length=150, unique=True)
+    email= models.EmailField(unique=True)
+    first_name= models.CharField(max_length=150, blank=True)
+    last_name= models.CharField(max_length=150, blank=True)
+    phone= models.CharField(max_length=150, blank=True)
+    organization= models.CharField(max_length=150, blank=True)
+    role = models.CharField(
         max_length=20,
         choices=ROLE_CHOICES,
         default='user'
     )
-    is_active: models.BooleanField = models.BooleanField(default=True)
-    last_login: models.DateTimeField = models.DateTimeField(null=True, blank=True)
-    created_at: models.DateTimeField = models.DateTimeField(default=timezone.now)
-    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
-    id: models.UUIDField = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    access_key_id: models.CharField = models.CharField(max_length=255, blank=True)
-    secret_access_key: models.CharField = models.CharField(max_length=255, blank=True)
+    is_active = models.BooleanField(default=True)
+    last_login = models.DateTimeField(null=True, blank=True)
+    created_at= models.DateTimeField(default=timezone.now)
+    updated_at= models.DateTimeField(auto_now=True)
+    id= models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    access_key_id= models.CharField(max_length=255, blank=True)
+    secret_access_key= models.CharField(max_length=255, blank=True)
 
     USERNAME_FIELD: str = 'email'
     REQUIRED_FIELDS: ClassVar[list[str]] = [ 'username', 'first_name', 'last_name']
