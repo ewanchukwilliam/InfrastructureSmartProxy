@@ -12,7 +12,6 @@ from accounts.models import User
 def get_ec2_client(user: User) -> EC2Client:
     """Initialize and return EC2 client with proper error handling."""
     access_key = user.access_key_id
-    secret_key = user.secret_access_key 
     secret_key = user.secret_access_key
     region = "us-east-1"
     
@@ -30,10 +29,10 @@ def get_ec2_client(user: User) -> EC2Client:
     return client
     
 
-def start_ec2_instances(instance_ids: list[str]) -> StartInstancesResultTypeDef | None:
+def start_ec2_instances(user: User, instance_ids: list[str]) -> StartInstancesResultTypeDef | None:
     """Start EC2 instances."""
     try:
-        ec2 = get_ec2_client()
+        ec2 = get_ec2_client(user)
         response = ec2.start_instances(InstanceIds=instance_ids)
         print(f"Starting instances: {instance_ids}")
         return response
@@ -41,10 +40,10 @@ def start_ec2_instances(instance_ids: list[str]) -> StartInstancesResultTypeDef 
         print(f"Error starting instances: {e}")
         return None
 
-def stop_ec2_instances(instance_ids: list[str]) -> StopInstancesResultTypeDef | None:
+def stop_ec2_instances(user: User, instance_ids: list[str]) -> StopInstancesResultTypeDef | None:
     """Stop EC2 instances."""
     try:
-        ec2 = get_ec2_client()
+        ec2 = get_ec2_client(user)
         response = ec2.stop_instances(InstanceIds=instance_ids)
         print(f"Stopping instances: {instance_ids}")
         return response
@@ -52,10 +51,10 @@ def stop_ec2_instances(instance_ids: list[str]) -> StopInstancesResultTypeDef | 
         print(f"Error stopping instances: {e}")
         return None
 
-def terminate_ec2_instances(instance_ids: list[str]) -> TerminateInstancesResultTypeDef | None:
+def terminate_ec2_instances(user: User, instance_ids: list[str]) -> TerminateInstancesResultTypeDef | None:
     """Terminate (delete) EC2 instances."""
     try:
-        ec2 = get_ec2_client()
+        ec2 = get_ec2_client(user)
         response = ec2.terminate_instances(InstanceIds=instance_ids)
         print(f"Terminating instances: {instance_ids}")
         return response
@@ -64,6 +63,7 @@ def terminate_ec2_instances(instance_ids: list[str]) -> TerminateInstancesResult
         return None
 
 def create_ec2_instance(
+    user: User,
     ami_id: str, 
     instance_type: str = "t2.micro", 
     key_name: str | None = None, 
@@ -72,7 +72,7 @@ def create_ec2_instance(
 ) -> str | None:
     """Create a new EC2 instance."""
     try:
-        ec2 = get_ec2_client()
+        ec2 = get_ec2_client(user)
         
         # Build parameters for run_instances
         params: dict[str, object] = {
