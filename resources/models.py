@@ -1,4 +1,6 @@
+from ast import Tuple
 from typing import final
+from django.conf import UserSettingsHolder
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
@@ -7,27 +9,27 @@ from django.utils import timezone
 
 # Create your models here.
 class ec2Instance(models.Model):
-    STATUS_CHOICES = (
+    STATUS_CHOICES: tuple[tuple[str, str], ...] = (
         ('pending', 'Pending'),
         ('running', 'Running'),
         ('stopped', 'Stopped'),
         ('terminated', 'Terminated'),
     )
-    name = models.CharField(max_length=255, unique=True)
-    ip_address = models.GenericIPAddressField(null=True, blank=True)
-    port = models.PositiveIntegerField(
+    name: models.CharField[str, str] = models.CharField(max_length=255, unique=True)
+    ip_address: models.GenericIPAddressField[str, int] = models.GenericIPAddressField(null=True, blank=True)
+    port: models.PositiveIntegerField[int, int] = models.PositiveIntegerField(
         default=22,
         validators=[MinValueValidator(1), MaxValueValidator(65535)]
     )
-    creating_user = models.ForeignKey(
-        'accounts_container',
+    creating_user: models.ForeignKey[User, int] = models.ForeignKey(
+        'Users',
         on_delete='do_nothing',
         related_name='creating_user'
     )
-    username = models.CharField(max_length=100)
-    password = models.CharField(max_length=255, blank=True)
+    username: models.CharField[str, str] = models.CharField(max_length=100)
+    password: models.CharField[str, str] = models.CharField(max_length=255, blank=True)
     ssh_key = models.TextField(blank=True, help_text="SSH private key for authentication")
-    status = models.CharField(
+    status: models.CharField[str, str] = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='pending'
