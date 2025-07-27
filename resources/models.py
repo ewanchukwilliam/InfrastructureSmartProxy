@@ -38,6 +38,7 @@ class EC2Instance(models.Model):
         choices=INSTANCE_TYPE,
         default='t2.micro'
     )
+    region: models.CharField = models.CharField(max_length=20, default='us-east-1')
     status: models.CharField = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,

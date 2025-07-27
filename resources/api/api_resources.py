@@ -6,12 +6,15 @@ from botocore.exceptions import BotoCoreError, ClientError
 from mypy_boto3_ec2.client import EC2Client
 from mypy_boto3_ec2.type_defs import StartInstancesResultTypeDef, StopInstancesResultTypeDef, TerminateInstancesResultTypeDef
 
+from accounts.models import User
 
-def get_ec2_client() -> EC2Client:
+
+def get_ec2_client(user: User) -> EC2Client:
     """Initialize and return EC2 client with proper error handling."""
-    access_key = os.environ.get("AWS_ACCESS_KEY_ID")
-    secret_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
-    region = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
+    access_key = user.access_key_id
+    secret_key = user.secret_access_key 
+    secret_key = user.secret_access_key
+    region = "us-east-1"
     
     if not access_key or not secret_key:
         raise ValueError(
