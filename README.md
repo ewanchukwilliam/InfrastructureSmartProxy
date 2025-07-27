@@ -35,7 +35,12 @@ python manage.py createsuperuser --email admin@example.com --username admin
 
 # TODO: 
  
-- [ ] test credentials and crud operations for user/ec2instance table
+- [x] test credentials and crud operations for user/ec2instance table
+- [x] create views for site visitors to interact with the containers basic
+
+- [ ] needs to be able to use ssh keys for authenticating containers
+- [ ] design CI/CD pipeline for deploying containers
+
 - [ ] create views for site visitors to interact with the containers
 - [ ] create a redis scheduled task to stop and terminate containers
 
