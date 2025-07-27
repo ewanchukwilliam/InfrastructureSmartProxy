@@ -1,15 +1,14 @@
 
 from django.shortcuts import render
 
-from accounts.models import Container
 
 def index(request):
     return render(request, "index.html")    
 
 def container_list(request):
-    containers = Container.objects.all()
+    # containers = Container.objects.all()
     context = {
-        'containers': containers,
+        'containers': '',
     }
     
     # Return partial template for HTMX requests
