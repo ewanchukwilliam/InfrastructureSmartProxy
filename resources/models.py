@@ -1,9 +1,11 @@
-from ast import Tuple
-from typing import final
-from django.conf import UserSettingsHolder
+import datetime
+from typing_extensions import override
+import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
+
+from accounts.models import User
 
 
 
@@ -21,26 +23,27 @@ class ec2Instance(models.Model):
         default=22,
         validators=[MinValueValidator(1), MaxValueValidator(65535)]
     )
-    creating_user: models.ForeignKey[User, int] = models.ForeignKey(
+    creating_user: models.ForeignKey[User, uuid.UUID] = models.ForeignKey(
         'Users',
-        on_delete='do_nothing',
-        related_name='creating_user'
+        on_delete= models.DO_NOTHING,
+        related_name='creating_user',
     )
     username: models.CharField[str, str] = models.CharField(max_length=100)
     password: models.CharField[str, str] = models.CharField(max_length=255, blank=True)
-    ssh_key = models.TextField(blank=True, help_text="SSH private key for authentication")
+    ssh_key: models.TextField[str, str] = models.TextField(blank=True, help_text="SSH private key for authentication")
     status: models.CharField[str, str] = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='pending'
     )
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at: models.DateTimeField[datetime.datetime, datetime.datetime] = models.DateTimeField(default=timezone.now)
+    updated_at: models.DateTimeField[datetime.datetime, datetime.datetime] = models.DateTimeField(auto_now=True)
     
     class Meta:
-        db_table = 'accounts_container'
-        ordering = ['-created_at']
+        db_table: str = 'accounts_container'
+        ordering: list[str] = ['-created_at']
     
+    @override
     def __str__(self):
         return f"{self.name} ({self.status})"
     
@@ -56,7 +59,7 @@ class ec2Instance(models.Model):
     def get_instance_ip_address(self):
         pass    
         
-    def get_instance_port(self)->int:
+    def get_instance_port(self):
         pass
 
         
