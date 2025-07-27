@@ -27,6 +27,8 @@ class User(AbstractUser):
     created_at: models.DateTimeField = models.DateTimeField(default=timezone.now)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
     id: models.UUIDField = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    access_key_id: models.CharField = models.CharField(max_length=255, blank=True)
+    secret_access_key: models.CharField = models.CharField(max_length=255, blank=True)
 
     USERNAME_FIELD: str = 'email'
     REQUIRED_FIELDS: ClassVar[list[str]] = [ 'username', 'first_name', 'last_name']
