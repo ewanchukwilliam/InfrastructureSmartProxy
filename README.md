@@ -30,6 +30,8 @@ python manage.py runserver
 gunicorn infrastructure_smart_proxy.wsgi:application
 ```
 
+# in case I forget how to create a new superuser
+python manage.py createsuperuser --email admin@example.com --username admin
 
 
 # MIGHT BE ABLE TO USE boto3 to do this instead of terraform
