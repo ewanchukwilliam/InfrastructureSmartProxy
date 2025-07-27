@@ -33,6 +33,12 @@ gunicorn infrastructure_smart_proxy.wsgi:application
 # in case I forget how to create a new superuser
 python manage.py createsuperuser --email admin@example.com --username admin
 
+# TODO: 
+ 
+- [ ] test credentials and crud operations for user/ec2instance table
+- [ ] create views for site visitors to interact with the containers
+- [ ] create a redis scheduled task to stop and terminate containers
+
 
 # MIGHT BE ABLE TO USE boto3 to do this instead of terraform
 # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#EC2.Client.describe_instances
