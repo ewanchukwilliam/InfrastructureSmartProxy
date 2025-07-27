@@ -8,6 +8,12 @@ x-environment: &dev_environment
   DB_PORT: 5432
   DB_USER: postgres
   DB_SSLMODE: disable
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  ROOT_EMAIL: ${ROOT_EMAIL}
+  ROOT_USERNAME: ${ROOT_USERNAME}
+  DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+
 
 x-logging: &default_logging
   driver: "json-file"
