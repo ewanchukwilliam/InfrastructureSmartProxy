@@ -2,7 +2,7 @@ from typing_extensions import override
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
-
+from resources.api.api_resources import create_ec2_instance
 from accounts.models import User
 from resources.api.api_resources import get_ec2_client
 
@@ -91,8 +91,7 @@ class EC2Instance(models.Model):
     def __str__(self):
         return f"{self.name} ({self.status})"
     
-    def create_instance(self):
-        from resources.api.api_resources import create_ec2_instance
+    def create_instance(self) -> str | None:
         
         instance_id = create_ec2_instance(
             user=self.creating_user,
@@ -106,7 +105,7 @@ class EC2Instance(models.Model):
             self.save()
             return instance_id
         return None
-    def start_instance(self):
+    def start_instance(self) -> bool:
         from resources.api.api_resources import start_ec2_instances
         
         if not self.aws_instance_id:
@@ -140,7 +139,7 @@ class EC2Instance(models.Model):
             return True
         return False    
 
-    def terminate_instance(self):
+    def terminate_instance(self) -> bool:
         from resources.api.api_resources import terminate_ec2_instances
         
         if not self.aws_instance_id:
@@ -157,8 +156,7 @@ class EC2Instance(models.Model):
             return True
         return False    
         
-    def get_instance_status(self):
-        from resources.api.api_resources import get_ec2_client
+    def get_instance_status(self)-> str | None:
         
         if not self.aws_instance_id:
             return None
@@ -181,7 +179,6 @@ class EC2Instance(models.Model):
         return None    
         
     def get_instance_ip_address(self):
-        from resources.api.api_resources import get_ec2_client
         
         if not self.aws_instance_id:
             return None
