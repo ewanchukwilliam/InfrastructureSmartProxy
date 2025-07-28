@@ -1,10 +1,8 @@
-import os
-from typing import TYPE_CHECKING, Dict, List, Any
 
 import boto3
 from botocore.exceptions import BotoCoreError, ClientError
 from mypy_boto3_ec2.client import EC2Client
-from mypy_boto3_ec2.type_defs import StartInstancesResultTypeDef, StopInstancesResultTypeDef, TerminateInstancesResultTypeDef
+from mypy_boto3_ec2.type_defs import ReservationResponseTypeDef, StartInstancesResultTypeDef, StopInstancesResultTypeDef, TerminateInstancesResultTypeDef
 
 from accounts.models import User
 
@@ -64,7 +62,7 @@ def terminate_ec2_instances(user: User, instance_ids: list[str]) -> TerminateIns
 
 def create_ec2_instance(
     user: User,
-    ami_id: str, 
+    ami_id: str,
     instance_type: str = "t2.micro", 
     key_name: str | None = None, 
     security_group_ids: list[str] | None = None, 
@@ -72,7 +70,7 @@ def create_ec2_instance(
 ) -> str | None:
     """Create a new EC2 instance."""
     try:
-        ec2 = get_ec2_client(user)
+        ec2: EC2Client = get_ec2_client(user)
         
         # Build parameters for run_instances
         params: dict[str, object] = {
@@ -89,7 +87,7 @@ def create_ec2_instance(
         if subnet_id:
             params["SubnetId"] = subnet_id
 
-        response = ec2.run_instances(**params)
+        response: ReservationResponseTypeDef = ec2.run_instances(**params)
         instance_id = response["Instances"][0].get("InstanceId")
         print(f"Created instance: {instance_id}")
         return instance_id

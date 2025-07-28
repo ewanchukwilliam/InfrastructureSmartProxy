@@ -1,6 +1,8 @@
 
+import json
+from typing import Any
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib.auth import get_user_model
@@ -13,7 +15,7 @@ def get_default_user():
     return User.objects.filter(is_superuser=True).first()
 
 
-def index(request):
+def index(request: HttpRequest)-> HttpResponse:
     instances = EC2Instance.objects.all()
     context = {
         'instances': instances,
@@ -21,7 +23,7 @@ def index(request):
     return render(request, "index.html", context)    
 
 @require_POST
-def start_instance(request, instance_id):
+def start_instance(request: HttpRequest, instance_id: str)-> HttpResponse:
     instance = get_object_or_404(EC2Instance, id=instance_id)
     success = instance.start_instance()
     return JsonResponse({
@@ -31,7 +33,7 @@ def start_instance(request, instance_id):
     })
 
 @require_POST
-def stop_instance(request, instance_id):
+def stop_instance(request: HttpRequest, instance_id: str)-> HttpResponse:
     instance = get_object_or_404(EC2Instance, id=instance_id)
     success = instance.stop_instance()
     return JsonResponse({
@@ -41,7 +43,7 @@ def stop_instance(request, instance_id):
     })
 
 @require_POST
-def terminate_instance(request, instance_id):
+def terminate_instance(request: HttpRequest, instance_id: str)-> HttpResponse:
     instance = get_object_or_404(EC2Instance, id=instance_id)
     success = instance.terminate_instance()
     return JsonResponse({
@@ -50,7 +52,7 @@ def terminate_instance(request, instance_id):
         'message': f"Instance {'terminated' if success else 'failed to terminate'}"
     })
 
-def check_instance_status(request, instance_id):
+def check_instance_status(request: HttpRequest, instance_id: str)-> HttpResponse:
     instance = get_object_or_404(EC2Instance, id=instance_id)
     current_status = instance.get_instance_status()
     current_ip = instance.get_instance_ip_address()
@@ -64,11 +66,10 @@ def check_instance_status(request, instance_id):
     })
 
 @require_POST
-def create_instance(request):
-    import json
+def create_instance(request: HttpRequest)-> HttpResponse:
     
     try:
-        data = json.loads(request.body)
+        data: object = json.loads(request.body)
         
         # Get the default superuser
         default_user = get_default_user()

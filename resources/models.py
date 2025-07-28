@@ -9,6 +9,8 @@ from resources.api.api_resources import get_ec2_client
 # Create your models here.
 # pyright: reportInvalidTypeArguments=false
 class EC2Instance(models.Model):
+    id: int
+    
     INSTANCE_TYPE_CHOICES: tuple[tuple[str, str], ...] = (
         ('t2.nano', 't2.nano'),
         ('t2.micro', 't2.micro'),
@@ -48,39 +50,39 @@ class EC2Instance(models.Model):
         ('sa-east-1', 'South America (São Paulo)'),
     )
 
-    name= models.CharField(max_length=255, unique=True) 
-    ip_address= models.GenericIPAddressField(null=True, blank=True)  
-    port= models.PositiveIntegerField(
+    name: str= models.CharField(max_length=255, unique=True) 
+    ip_address: str= models.GenericIPAddressField(null=True, blank=True)  
+    port: str= models.PositiveIntegerField(
         default=22,
         validators=[MinValueValidator(1), MaxValueValidator(65535)]
     )
-    creating_user= models.ForeignKey(
+    creating_user: User= models.ForeignKey(
         User,
         on_delete= models.DO_NOTHING,
         related_name='creating_user',
     )
-    username= models.CharField(max_length=100)
-    password= models.CharField(max_length=255, blank=True)
-    ssh_key= models.TextField(blank=True, help_text="SSH private key for authentication")
-    instance_type= models.CharField(
+    username: str= models.CharField(max_length=100)
+    password: str= models.CharField(max_length=255, blank=True)
+    ssh_key: str= models.TextField(blank=True, help_text="SSH private key for authentication")
+    instance_type: str= models.CharField(
         max_length=20,
         choices=INSTANCE_TYPE_CHOICES,
         default='t2.micro'
     )
-    aws_instance_id= models.CharField(
+    aws_instance_id: str= models.CharField(
         max_length=20, 
         blank=True, 
         null=True, 
         help_text="AWS EC2 instance ID (e.g., i-1234567890abcdef0)"
     )
-    region= models.CharField(max_length=20, choices=REGION_CHOICES, default='us-east-1')
-    status= models.CharField(
+    region: str= models.CharField(max_length=20, choices=REGION_CHOICES, default='us-east-1')
+    status: str= models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='pending'
     )
-    created_at= models.DateTimeField(default=timezone.now)
-    updated_at= models.DateTimeField(auto_now=True)
+    created_at: str= models.DateTimeField(default=timezone.now)
+    updated_at: str= models.DateTimeField(auto_now=True)
     
     class Meta:
         ordering: list[str] = ['-created_at']
