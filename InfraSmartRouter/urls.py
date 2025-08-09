@@ -28,4 +28,5 @@ urlpatterns = [
     path('instances/<int:instance_id>/stop/', views.stop_instance, name='stop-instance'),
     path('instances/<int:instance_id>/terminate/', views.terminate_instance, name='terminate-instance'),
     path('instances/<int:instance_id>/status/', views.check_instance_status, name='check-instance-status'),
+    path('sync-instances/', views.get_instances, name='sync-instances'),
 ]

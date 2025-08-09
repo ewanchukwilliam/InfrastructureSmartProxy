@@ -175,6 +175,7 @@ def sync_aws_instances(request: HttpRequest):
     except Exception as e:
         print(f"Error syncing AWS instances: {e}")
 
+@require_POST
 def get_instances(request: HttpRequest) -> HttpResponse:
     """API endpoint to sync and return instances"""
     User = get_user_model()
