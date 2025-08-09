@@ -37,6 +37,7 @@ python manage.py createsuperuser --email admin@example.com --username admin
  
 - [x] test credentials and crud operations for user/ec2instance table
 - [x] create views for site visitors to interact with the containers basic
+- [x] db values are automatically synced if erased locally for ec2 instances 
 
 - [ ] needs to be able to use ssh keys for authenticating containers
 - [ ] design CI/CD pipeline for deploying containers

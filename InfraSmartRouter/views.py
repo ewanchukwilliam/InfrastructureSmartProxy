@@ -1,13 +1,14 @@
 
 import boto3
 import json
+from functools import wraps
 from resources.models import EC2Instance
 from django.contrib.auth import get_user_model
 from typing import Any
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from django.contrib.auth import get_user_model
 from resources.models import EC2Instance
 
@@ -16,6 +17,26 @@ User = get_user_model()
 def get_default_user():
     """Get the default superuser for operations"""
     return User.objects.filter(is_superuser=True).first()
+
+def ensure_user_available(view_func):
+    """
+    Decorator that ensures a user is available for operations.
+    Uses authenticated user if available, otherwise falls back to default superuser.
+    Returns 400 JSON response if no user is available.
+    """
+    @wraps(view_func)
+    def wrapper(request: HttpRequest, *args, **kwargs):
+        user = request.user if request.user.is_authenticated else get_default_user()
+        if not user:
+            return JsonResponse({
+                'success': False,
+                'error': 'No user available for operation'
+            }, status=400)
+        
+        # Add user to request so view functions can access it
+        request.operation_user = user
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 
 def index(request: HttpRequest)-> HttpResponse:
@@ -68,24 +89,20 @@ def check_instance_status(request: HttpRequest, instance_id: str)-> HttpResponse
         'region': instance.region
     })
 
-@require_POST
+@ensure_user_available
+@require_http_methods(["POST"])
 def create_instance(request: HttpRequest)-> HttpResponse:
     
     try:
         data: object = json.loads(request.body)
         
-        # Get the default superuser
-        default_user = get_default_user()
-        if not default_user:
-            return JsonResponse({
-                'success': False,
-                'message': 'No default user found. Please run migrations.'
-            })
+        # Get user from decorator
+        user = request.operation_user
         
         # Create new EC2Instance with defaults and user input
         instance = EC2Instance.objects.create(
-            name=data.get('name', f'instance-{default_user.username}-{len(EC2Instance.objects.filter(creating_user=default_user)) + 1}'),
-            creating_user=default_user,
+            name=data.get('name', f'instance-{user.username}-{len(EC2Instance.objects.filter(creating_user=user)) + 1}'),
+            creating_user=user,
             username=data.get('username', 'ubuntu'),  # Default Ubuntu username
             password=data.get('password', ''),  # Usually empty for key-based auth
             instance_type=data.get('instance_type', 't2.micro'),  # Default from model
@@ -122,15 +139,13 @@ def create_instance(request: HttpRequest)-> HttpResponse:
             'message': f'Error creating instance: {str(e)}'
         })
 
+@ensure_user_available
 def sync_aws_instances(request: HttpRequest):
     """Sync AWS instances with database (internal function)"""
-    User = get_user_model()
     
     try:
-        # Get default user if request.user is anonymous
-        user = request.user if request.user.is_authenticated else get_default_user()
-        if not user:
-            return
+        # Get user from decorator
+        user = request.operation_user
             
         # Iterate through all regions
         for region_code, region_name in EC2Instance.REGION_CHOICES:
@@ -175,19 +190,14 @@ def sync_aws_instances(request: HttpRequest):
     except Exception as e:
         print(f"Error syncing AWS instances: {e}")
 
-@require_POST
+@ensure_user_available
+@require_http_methods(["POST"])
 def get_instances(request: HttpRequest) -> HttpResponse:
     """API endpoint to sync and return instances"""
-    User = get_user_model()
     
     try:
-        # Get default user if request.user is anonymous
-        user = request.user if request.user.is_authenticated else get_default_user()
-        if not user:
-            return JsonResponse({
-                'success': False,
-                'error': 'No user available for sync'
-            }, status=400)
+        # Get user from decorator
+        user = request.operation_user
             
         synced_instances = []
         
