@@ -46,7 +46,3 @@ class User(AbstractUser):
     def get_full_name(self)-> str:
         return f"{self.first_name} {self.last_name}".strip()
     
-    @override
-    def get_short_name(self):
-        return self.first_name or self.username
-    

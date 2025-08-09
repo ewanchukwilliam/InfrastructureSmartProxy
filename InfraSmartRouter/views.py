@@ -2,14 +2,10 @@
 import boto3
 import json
 from functools import wraps
-from resources.models import EC2Instance
 from django.contrib.auth import get_user_model
-from typing import Any
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from django.contrib.auth import get_user_model
 from resources.models import EC2Instance
 
 User = get_user_model()
