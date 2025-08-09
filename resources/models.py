@@ -73,7 +73,8 @@ class EC2Instance(models.Model):
         max_length=20, 
         blank=True, 
         null=True, 
-        help_text="AWS EC2 instance ID (e.g., i-1234567890abcdef0)"
+        help_text="AWS EC2 instance ID (e.g., i-1234567890abcdef0)",
+        unique=True
     )
     region: str= models.CharField(max_length=20, choices=REGION_CHOICES, default='us-east-1')
     status: str= models.CharField(

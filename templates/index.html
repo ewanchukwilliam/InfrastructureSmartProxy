@@ -11,6 +11,9 @@
             box-sizing: border-box;
         }
         
+		html {
+			scroll-behavior: smooth;
+		}
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
@@ -429,6 +432,7 @@
                 align-items: center;
             }
         }
+		
     </style>
 </head>
 <body>
@@ -556,7 +560,12 @@
                 </form>
             </div>
             
-            {% if instances %}
+            {% if not instances %}
+                <div class="instance-card">
+                    <p>No EC2 instances found in database.</p>
+                    <button class="btn btn-primary" onclick="syncInstances()" style="margin-top: 1rem;">Sync AWS Instances</button>
+                </div>
+            {% else %}
                 {% for instance in instances %}
                 <div class="instance-card" data-instance-id="{{ instance.id }}">
                     <div class="instance-header">
@@ -597,10 +606,6 @@
                     </div>
                 </div>
                 {% endfor %}
-            {% else %}
-                <div class="instance-card">
-                    <p>No EC2 instances found. Create instances through the admin panel.</p>
-                </div>
             {% endif %}
         </div>
     </section>
@@ -799,6 +804,39 @@
             } finally {
                 submitButton.disabled = false;
                 submitButton.textContent = originalText;
+            }
+        }
+
+        async function syncInstances() {
+            const button = event.target;
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Syncing...';
+
+            try {
+                const response = await fetch('/sync-instances/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage(`Synced ${data.synced_count} instances from AWS`, 'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showMessage(data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error occurred', 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = originalText;
             }
         }
 

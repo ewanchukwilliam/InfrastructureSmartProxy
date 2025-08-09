@@ -1,5 +1,8 @@
 
+import boto3
 import json
+from resources.models import EC2Instance
+from django.contrib.auth import get_user_model
 from typing import Any
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpRequest, HttpResponse, JsonResponse
@@ -118,6 +121,140 @@ def create_instance(request: HttpRequest)-> HttpResponse:
             'success': False,
             'message': f'Error creating instance: {str(e)}'
         })
+
+def sync_aws_instances(request: HttpRequest):
+    """Sync AWS instances with database (internal function)"""
+    User = get_user_model()
+    
+    try:
+        # Get default user if request.user is anonymous
+        user = request.user if request.user.is_authenticated else get_default_user()
+        if not user:
+            return
+            
+        # Iterate through all regions
+        for region_code, region_name in EC2Instance.REGION_CHOICES:
+            try:
+                # Get AWS instances for this region
+                ec2_client = boto3.client('ec2', region_name=region_code)
+                boto3_instances = ec2_client.describe_instances()
+                
+                for reservation in boto3_instances['Reservations']:
+                    for instance in reservation['Instances']:
+                        # Extract AWS data
+                        aws_instance_id = instance['InstanceId']
+                        state = instance['State']['Name']
+                        instance_type = instance['InstanceType']
+                        public_ip = instance.get('PublicIpAddress')
+                        region = instance['Placement']['AvailabilityZone'][:-1]
+                        
+                        # Get instance name from tags
+                        name = aws_instance_id
+                        for tag in instance.get('Tags', []):
+                            if tag['Key'] == 'Name':
+                                name = tag['Value']
+                                break
+                        
+                        # Update or create database record
+                        EC2Instance.objects.update_or_create(
+                            aws_instance_id=aws_instance_id,
+                            defaults={
+                                'name': name,
+                                'status': state,
+                                'instance_type': instance_type,
+                                'ip_address': public_ip,
+                                'region': region,
+                                'creating_user': user,
+                                'username': 'ubuntu',
+                            }
+                        )
+            except Exception as e:
+                print(f"Error syncing instances from region {region_code}: {e}")
+                continue
+        print(f"Synced {len(EC2Instance.objects.all())} instances")
+    except Exception as e:
+        print(f"Error syncing AWS instances: {e}")
+
+def get_instances(request: HttpRequest) -> HttpResponse:
+    """API endpoint to sync and return instances"""
+    User = get_user_model()
+    
+    try:
+        # Get default user if request.user is anonymous
+        user = request.user if request.user.is_authenticated else get_default_user()
+        if not user:
+            return JsonResponse({
+                'success': False,
+                'error': 'No user available for sync'
+            }, status=400)
+            
+        synced_instances = []
+        
+        # Iterate through all regions
+        for region_code, region_name in EC2Instance.REGION_CHOICES:
+            try:
+                # Get AWS instances for this region
+                ec2_client = boto3.client('ec2', region_name=region_code)
+                boto3_instances = ec2_client.describe_instances()
+                
+                for reservation in boto3_instances['Reservations']:
+                    for instance in reservation['Instances']:
+                        # Extract AWS data
+                        aws_instance_id = instance['InstanceId']
+                        state = instance['State']['Name']
+                        instance_type = instance['InstanceType']
+                        public_ip = instance.get('PublicIpAddress')
+                        region = instance['Placement']['AvailabilityZone'][:-1]
+                        
+                        # Get instance name from tags
+                        name = aws_instance_id
+                        for tag in instance.get('Tags', []):
+                            if tag['Key'] == 'Name':
+                                name = tag['Value']
+                                break
+                        
+                        # Update or create database record
+                        db_instance, created = EC2Instance.objects.update_or_create(
+                            aws_instance_id=aws_instance_id,
+                            defaults={
+                                'name': name,
+                                'status': state,
+                                'instance_type': instance_type,
+                                'ip_address': public_ip,
+                                'region': region,
+                                'creating_user': user,
+                                'username': 'ubuntu',
+                            }
+                        )
+                        
+                        synced_instances.append({
+                            'id': db_instance.id,
+                            'aws_instance_id': aws_instance_id,
+                            'name': name,
+                            'state': state,
+                            'type': instance_type,
+                            'ip_address': public_ip,
+                            'region': region,
+                            'created': created
+                        })
+            except Exception as e:
+                print(f"Error syncing instances from region {region_code}: {e}")
+                continue
+        
+        return JsonResponse({
+            'success': True,
+            'synced_count': len(synced_instances),
+            'instances': synced_instances
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+    
 
 
 # these lines exist because neovim 11.3 is breaking when you delete the eof line
