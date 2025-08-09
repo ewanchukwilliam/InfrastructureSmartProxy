@@ -8,7 +8,7 @@ from typing import Any
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST, require_http_methods
+from django.views.decorators.http import require_http_methods
 from django.contrib.auth import get_user_model
 from resources.models import EC2Instance
 
@@ -39,6 +39,7 @@ def ensure_user_available(view_func):
     return wrapper
 
 
+@require_http_methods(["GET"])
 def index(request: HttpRequest)-> HttpResponse:
     instances = EC2Instance.objects.all()
     context = {
@@ -46,7 +47,7 @@ def index(request: HttpRequest)-> HttpResponse:
     }
     return render(request, "index.html", context)    
 
-@require_POST
+@require_http_methods(["POST"])
 def start_instance(request: HttpRequest, instance_id: str)-> HttpResponse:
     instance = get_object_or_404(EC2Instance, id=instance_id)
     success = instance.start_instance()
@@ -56,7 +57,7 @@ def start_instance(request: HttpRequest, instance_id: str)-> HttpResponse:
         'message': f"Instance {'started' if success else 'failed to start'}"
     })
 
-@require_POST
+@require_http_methods(["POST"])
 def stop_instance(request: HttpRequest, instance_id: str)-> HttpResponse:
     instance = get_object_or_404(EC2Instance, id=instance_id)
     success = instance.stop_instance()
@@ -66,7 +67,7 @@ def stop_instance(request: HttpRequest, instance_id: str)-> HttpResponse:
         'message': f"Instance {'stopped' if success else 'failed to stop'}"
     })
 
-@require_POST
+@require_http_methods(["POST"])
 def terminate_instance(request: HttpRequest, instance_id: str)-> HttpResponse:
     instance = get_object_or_404(EC2Instance, id=instance_id)
     success = instance.terminate_instance()
@@ -76,6 +77,7 @@ def terminate_instance(request: HttpRequest, instance_id: str)-> HttpResponse:
         'message': f"Instance {'terminated' if success else 'failed to terminate'}"
     })
 
+@require_http_methods(["GET"])
 def check_instance_status(request: HttpRequest, instance_id: str)-> HttpResponse:
     instance = get_object_or_404(EC2Instance, id=instance_id)
     current_status = instance.get_instance_status()
