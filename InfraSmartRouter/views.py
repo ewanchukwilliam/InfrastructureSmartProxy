@@ -1,4 +1,5 @@
 
+from typing import Callable
 import boto3
 import json
 from functools import wraps
@@ -14,7 +15,7 @@ def get_default_user():
     """Get the default superuser for operations"""
     return User.objects.filter(is_superuser=True).first()
 
-def ensure_user_available(view_func):
+def ensure_user_available(view_func: Callable):
     """
     Decorator that ensures a user is available for operations.
     Uses authenticated user if available, otherwise falls back to default superuser.
