@@ -19,5 +19,5 @@ jobs:
       - name: Write hello.txt on remote server
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no williamewanchuk@23.17.83.95 \
-            "echo 'Hello World' > ~/hello.txt"
+            "echo 'Hello World' > ~/Projects/DjangoProjects/InfraSmartRouter/hello.txt"
         
