@@ -200,10 +200,3 @@ class EC2Instance(models.Model):
         except Exception as e:
             print(f"Error getting instance IP: {e}")
         return None    
-        
-
-        
-
-
-
-

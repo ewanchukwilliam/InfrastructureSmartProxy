@@ -1,0 +1,23 @@
+name: Write Hello World via SSH
+
+on:
+  workflow_dispatch:  # manual trigger for now
+
+jobs:
+  write-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DESKTOP_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Write hello.txt on remote server
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no williamewanchuk@23.17.83.95 \
+            "echo 'Hello World' > ~/hello.txt"
+        
