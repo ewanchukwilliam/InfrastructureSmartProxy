@@ -20,6 +20,9 @@ jobs:
 
       - name: Write hello.txt on remote server
         run: |
+
+          echo "SSH key file size: $(wc -c < ~/.ssh/id_rsa) bytes"
+          echo "SSH key file exists: $(test -f ~/.ssh/id_rsa && echo 'yes' || echo 'no')"
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no williamewanchuk@23.17.83.95 \
             "echo 'Hello World' > ~/Projects/DjangoProjects/InfraSmartRouter/hello.txt"
         
