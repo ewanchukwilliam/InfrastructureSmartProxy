@@ -40,6 +40,7 @@ python manage.py createsuperuser --email admin@example.com --username admin
 - [x] db values are automatically synced if erased locally for ec2 instances 
 - [x] created github actions workflow to remotely execute code on my desktop through secrets can be done from anywhere.
 
+- [ ] configure an smtp server for sending emails through ewanchukwilliam2@gmail.com
 - [ ] needs to be able to use ssh keys for authenticating containers
 - [ ] design CI/CD pipeline for deploying containers
 
