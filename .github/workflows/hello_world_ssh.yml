@@ -14,8 +14,9 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.DESKTOP_SSH_KEY }}" > ~/.ssh/id_rsa
-          cat ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          echo "SSH key file size: $(wc -c < ~/.ssh/id_rsa) bytes"
+          echo "SSH key file exists: $(test -f ~/.ssh/id_rsa && echo 'yes' || echo 'no')"
 
       - name: Write hello.txt on remote server
         run: |
