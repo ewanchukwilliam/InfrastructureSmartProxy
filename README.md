@@ -39,7 +39,10 @@ python manage.py createsuperuser --email admin@example.com --username admin
 - [x] create views for site visitors to interact with the containers basic
 - [x] db values are automatically synced if erased locally for ec2 instances 
 - [x] created github actions workflow to remotely execute code on my desktop through secrets can be done from anywhere.
+- [x] auth backend for allauth configured for google https://localhost:8000/accounts/login/ to test
 
+- [ ] confirm google auth console configuration is working approval wise
+- [ ] configure appropriate login page and protect url routes. 
 - [ ] configure an smtp server for sending emails through ewanchukwilliam2@gmail.com
 - [ ] needs to be able to use ssh keys for authenticating containers
 - [ ] design CI/CD pipeline for deploying containers
