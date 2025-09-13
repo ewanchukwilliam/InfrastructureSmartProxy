@@ -6,6 +6,8 @@ on:
 jobs:
   write-file:
     runs-on: ubuntu-latest
+    container: 
+      image: crazymax/msmtp
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -24,8 +26,6 @@ jobs:
 
       - name: configure msmtp
         run: |
-          sudo apt update
-          sudo apt install msmtp msmtp-mta -y
           touch ~/.msmtprc
           chmod 600 ~/.msmtprc
           cat > ~/.msmtprc <<EOF
