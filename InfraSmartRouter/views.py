@@ -2,12 +2,15 @@
 from typing import Callable
 import boto3
 import json
+import logging
 from functools import wraps
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from resources.models import EC2Instance
+
+logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
@@ -153,6 +156,10 @@ def sync_aws_instances(request: HttpRequest):
                 ec2_client = boto3.client('ec2', region_name=region_code)
                 boto3_instances = ec2_client.describe_instances()
                 
+                if len(boto3_instances['Reservations']) == 0:
+                    logger.info(f"No instances found in region {region_code}")
+                    continue
+
                 for reservation in boto3_instances['Reservations']:
                     for instance in reservation['Instances']:
                         # Extract AWS data
@@ -162,6 +169,7 @@ def sync_aws_instances(request: HttpRequest):
                         public_ip = instance.get('PublicIpAddress')
                         region = instance['Placement']['AvailabilityZone'][:-1]
                         
+                        logger.info(f"Found instance {aws_instance_id} in region {region}")
                         # Get instance name from tags
                         name = aws_instance_id
                         for tag in instance.get('Tags', []):
@@ -207,6 +215,10 @@ def get_instances(request: HttpRequest) -> HttpResponse:
                 ec2_client = boto3.client('ec2', region_name=region_code)
                 boto3_instances = ec2_client.describe_instances()
                 
+                if len(boto3_instances['Reservations']) == 0:
+                    logger.info(f"No instances found in region {region_code}")
+                    continue
+                
                 for reservation in boto3_instances['Reservations']:
                     for instance in reservation['Instances']:
                         # Extract AWS data
@@ -215,6 +227,8 @@ def get_instances(request: HttpRequest) -> HttpResponse:
                         instance_type = instance['InstanceType']
                         public_ip = instance.get('PublicIpAddress')
                         region = instance['Placement']['AvailabilityZone'][:-1]
+                        
+                        logger.info(f"Found instance {aws_instance_id} in region {region}")
                         
                         # Get instance name from tags
                         name = aws_instance_id
@@ -262,14 +276,3 @@ def get_instances(request: HttpRequest) -> HttpResponse:
             'success': False,
             'error': str(e)
         }, status=500)
-
-
-    
-
-
-# these lines exist because neovim 11.3 is breaking when you delete the eof line
-# these lines exist because neovim 11.3 is breaking when you delete the eof line
-# these lines exist because neovim 11.3 is breaking when you delete the eof line
-# these lines exist because neovim 11.3 is breaking when you delete the eof line
-# these lines exist because neovim 11.3 is breaking when you delete the eof line
-# these lines exist because neovim 11.3 is breaking when you delete the eof line
