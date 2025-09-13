@@ -55,11 +55,11 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend', # default
     'allauth.account.auth_backends.AuthenticationBackend', # needed for allauth
 ]
-SOCIAL_ACCOUNT_PROVIDERS = {
+SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
             'client_id': os.getenv('CLIENT_ID_GOOGLE') or '',
-            'client_secret': os.getenv('CLIENT_SECRET_GOOGLE') or '',
+            'secret': os.getenv('CLIENT_SECRET_GOOGLE') or '',
             'key':'',
         },
         'SCOPE': ['profile', 'email'],
