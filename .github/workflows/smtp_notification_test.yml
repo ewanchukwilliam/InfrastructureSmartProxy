@@ -6,8 +6,6 @@ on:
 jobs:
   write-file:
     runs-on: ubuntu-latest
-    container: 
-      image: crazymax/msmtp
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -26,6 +24,8 @@ jobs:
 
       - name: configure msmtp
         run: |
+          sudo apt update
+          sudo apt install msmtp msmtp-mta -y
           touch ~/.msmtprc
           chmod 600 ~/.msmtprc
           cat > ~/.msmtprc <<EOF
@@ -45,4 +45,4 @@ jobs:
           chmod 600 ~/.msmtprc
       - name: send email
         run: |
-          echo -e "Subject: NEWEST EMAIL FROM GITHUB ACTIONS\n\n This is the body." | msmtp ewanchukwilliam@gmail.com
+          echo -e "Subject: Test Email from Ubuntu\n\n This is the body." | msmtp ewanchukwilliam@gmail.com
