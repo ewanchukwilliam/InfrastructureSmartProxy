@@ -19,7 +19,9 @@ jobs:
       - name: Write hello.txt on remote server
         run: |
 
-          ssh -i ~/.ssh/id_rsa -p 2222 -o StrictHostKeyChecking=no williamewanchuk@23.17.83.95 
+          ssh -i ~/.ssh/id_rsa -p 2222 -o StrictHostKeyChecking=no williamewanchuk@23.17.83.95 \
+            "echo 'Hello World' > ~/hello.txt"
+
       - name: configure msmtp
         run: |
           sudo apt update
@@ -30,7 +32,6 @@ jobs:
           defaults
           auth           on
           tls            on
-          tls_trust_file /etc/ssl/c/ca-certificates.crt
           logfile        ~/.msmtp.log
           account        gmail
           host           smtp.gmail.com
