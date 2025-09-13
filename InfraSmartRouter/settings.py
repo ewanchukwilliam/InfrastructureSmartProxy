@@ -35,15 +35,39 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.sites', # required for allauth
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig',
-    #'accounts',
+    # 'accounts',
     'resources',
-
+    
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+
+SITE_ID = 1
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend', # default
+    'allauth.account.auth_backends.AuthenticationBackend', # needed for allauth
+]
+SOCIAL_ACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.getenv('CLIENT_ID_GOOGLE') or '',
+            'client_secret': os.getenv('CLIENT_SECRET_GOOGLE') or '',
+            'key':'',
+        },
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -53,6 +77,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 
 ]
 
