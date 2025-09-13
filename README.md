@@ -40,6 +40,8 @@ python manage.py createsuperuser --email admin@example.com --username admin
 - [x] db values are automatically synced if erased locally for ec2 instances 
 - [x] created github actions workflow to remotely execute code on my desktop through secrets can be done from anywhere.
 - [x] auth backend for allauth configured for google https://localhost:8000/accounts/login/ to test
+- [x] styled the login page
+
 
 - [ ] confirm google auth console configuration is working approval wise
 - [ ] configure appropriate login page and protect url routes. 

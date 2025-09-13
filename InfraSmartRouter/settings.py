@@ -86,8 +86,8 @@ ROOT_URLCONF = 'InfraSmartRouter.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ["./templates"],
-        'APP_DIRS': True,
+        'DIRS': ["./templates"],  # Django checks here FIRST - allows overriding allauth templates
+        'APP_DIRS': True,        # Then checks app directories (including allauth package templates)
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
