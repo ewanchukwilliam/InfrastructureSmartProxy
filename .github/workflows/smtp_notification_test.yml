@@ -20,7 +20,7 @@ jobs:
         run: |
 
           ssh -i ~/.ssh/id_rsa -p 2222 -o StrictHostKeyChecking=no williamewanchuk@23.17.83.95 \
-            "echo 'Hello World' > ~/hello.txt"
+            "echo 'Hello World' > ~/Projects/DjangoProjects/InfraSmartRouter/InfraSmartRouter/hello.txt"
 
       - name: configure msmtp
         run: |
