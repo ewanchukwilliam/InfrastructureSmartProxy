@@ -157,3 +157,11 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+# Email configuration for development (console backend)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Allauth configuration
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Disable email verification for now
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
