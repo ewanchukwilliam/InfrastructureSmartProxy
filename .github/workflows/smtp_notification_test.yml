@@ -24,6 +24,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt install msmtp msmtp-mta -y
+          touch ~/.msmtprc
+          chmod 600 ~/.msmtprc
           cat > ~/.msmtprc <<EOF
           defaults
           auth           on
