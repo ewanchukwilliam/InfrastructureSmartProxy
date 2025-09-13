@@ -1,0 +1,45 @@
+name: Testing SMTP Notification
+
+on:
+  workflow_dispatch: # manual trigger for now
+
+jobs:
+  write-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DESKTOP_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Write hello.txt on remote server
+        run: |
+
+          ssh -i ~/.ssh/id_rsa -p 2222 -o StrictHostKeyChecking=no williamewanchuk@23.17.83.95 
+      - name: configure msmtp
+        run: |
+          sudo apt update
+          sudo apt install msmtp msmtp-mta -y
+          cat > ~/.msmtprc <<EOF
+          defaults
+          auth           on
+          tls            on
+          tls_trust_file /etc/ssl/c/ca-certificates.crt
+          logfile        ~/.msmtp.log
+          account        gmail
+          host           smtp.gmail.com
+          port           587
+          tls_starttls   on
+          from           ewanchukwilliam2@gmail.com
+          user           ewanchukwilliam2@gmail.com
+          password       ${{ secrets.GMAIL_MSMTPRC_EWANCHUKWILLIAM2 }}
+          account default : gmail
+          EOF
+          chmod 600 ~/.msmtprc
+      - name: send email
+        run: |
+          echo -e "Subject: Test Email from Ubuntu\n\n This is the body." | msmtp ewanchukwilliam@gmail.com
